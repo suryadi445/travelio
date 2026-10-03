@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildGoogleBooksUrl, normalizeBook } from '../src/services/googleBooksService.js';
+import { buildGoogleBooksUrl, googleBooksFailureMessage, normalizeBook } from '../src/services/googleBooksService.js';
 
 test('normalizes incomplete Google Books volumes safely', () => {
   assert.deepEqual(normalizeBook({ id: 'abc' }), {
@@ -26,4 +26,13 @@ test('builds Google Books search URL without an API key by default', () => {
 test('adds the optional API key to Google Books requests', () => {
   const url = buildGoogleBooksUrl('Clean Code', 'test-key');
   assert.equal(url.searchParams.get('key'), 'test-key');
+});
+
+test('explains Google Books quota failures', () => {
+  assert.match(googleBooksFailureMessage(429), /quota was exceeded/i);
+  assert.match(googleBooksFailureMessage(403, { error: { errors: [{ reason: 'quotaExceeded' }] } }), /quota was exceeded/i);
+});
+
+test('explains rejected API key failures without exposing response details', () => {
+  assert.match(googleBooksFailureMessage(403), /rejected access/i);
 });
