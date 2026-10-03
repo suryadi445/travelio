@@ -54,11 +54,12 @@ The root `.env.example` documents the application settings:
 | `PORT` | Express listen port for local development | `4000` |
 | `MONGODB_URI` | MongoDB connection string | local MongoDB URL |
 | `GOOGLE_BOOKS_API_URL` | Google Books volumes endpoint | Google Books API |
+| `GOOGLE_BOOKS_API_KEY` | Optional Google Books API key; leave blank to use the public request without a key | empty |
 | `CORS_ORIGIN` | Allowed browser origins, comma-separated | Vite local URL |
 | `VITE_API_BASE_URL` | Frontend API base for local development | `/api` |
 | `FRONTEND_PORT` | Host port for the Docker frontend | `8080` |
 
-Docker Compose uses the internal MongoDB service URL and the frontend's same-origin `/api` proxy. Set `FRONTEND_PORT` or `GOOGLE_BOOKS_API_URL` in `.env` to customize those settings.
+Docker Compose uses the internal MongoDB service URL and the frontend's same-origin `/api` proxy. Set `FRONTEND_PORT` or `GOOGLE_BOOKS_API_URL` in `.env` to customize those settings. `GOOGLE_BOOKS_API_KEY` is optional; when set, the backend appends it to Google Books requests. Keep it in the backend environment and never add its value to frontend variables or commit it.
 
 ## API Endpoints
 
@@ -84,6 +85,8 @@ The included `render.yaml` defines a Render Static Site for the frontend and a f
 2. In Render, create a Blueprint from this repository and select `render.yaml`.
 3. When prompted, set `MONGODB_URI` to the Atlas connection string. Render creates the API and frontend and connects the frontend API URL automatically.
 4. Open the generated `bookhaven-web` URL and test a search and saving/removing a wishlist book.
+
+To use a Google Books API key on Render, add `GOOGLE_BOOKS_API_KEY` under the API service's Environment settings. Leave it unset to make requests without a key. Restrict the key to the Google Books API in Google Cloud Console; the key is used only by the backend.
 
 Render's free web services sleep after 15 minutes without traffic and can take about a minute to wake. This is acceptable for an occasional review demo, but the first request after idle may be slow. MongoDB Atlas Free has resource limits; keep this deployment for the evaluation and do not store sensitive data.
 
