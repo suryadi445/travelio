@@ -7,7 +7,10 @@ import { errorHandler, notFound } from './middleware/errorHandler.js';
 
 export const app = express();
 app.disable('x-powered-by');
-app.use(cors({ origin: config.corsOrigin.split(',').map((origin) => origin.trim()) }));
+const corsOrigin = config.corsOrigin.trim() === '*'
+  ? '*'
+  : config.corsOrigin.split(',').map((origin) => origin.trim());
+app.use(cors({ origin: corsOrigin }));
 app.use(express.json({ limit: '32kb' }));
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
 app.get('/api/books/search', searchBooks);
