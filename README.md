@@ -76,6 +76,17 @@ The wishlist uses `googleBookId` as a unique key. Repeated saves return the exis
 
 The Docker Compose stack is suitable for a single-host demo. For a hosted deployment, build the frontend image and backend image separately, provide a managed MongoDB URI to the backend, expose the backend behind HTTPS, and set `CORS_ORIGIN` to the public frontend origin. When hosting frontend and API on separate domains, build the frontend with `VITE_API_BASE_URL` pointing to the public API URL; when serving through the included Nginx proxy, keep the same-origin `/api` path. Do not commit `.env` files or production credentials.
 
+### Free demo on Render + MongoDB Atlas
+
+The included `render.yaml` defines a Render Static Site for the frontend and a free Docker web service for the API. To deploy it:
+
+1. Create a free MongoDB Atlas cluster and a database user. Allow network access from Render (Atlas network access may require `0.0.0.0/0` for this demo) and copy the Atlas connection string for the `bookhaven` database.
+2. In Render, create a Blueprint from this repository and select `render.yaml`.
+3. When prompted, set `MONGODB_URI` to the Atlas connection string. Render creates the API and frontend and connects the frontend API URL automatically.
+4. Open the generated `bookhaven-web` URL and test a search and saving/removing a wishlist book.
+
+Render's free web services sleep after 15 minutes without traffic and can take about a minute to wake. This is acceptable for an occasional review demo, but the first request after idle may be slow. MongoDB Atlas Free has resource limits; keep this deployment for the evaluation and do not store sensitive data.
+
 ## Verification
 
 Backend unit tests cover normalization of incomplete Google Books responses. Run them with `cd backend && npm test`; build the web client with `cd frontend && npm run build`. Docker health checks cover MongoDB, the API, and the web container.
